@@ -21,8 +21,8 @@ jobs:
           context: ./frontend
           push: true
           tags: |
-            ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }}
-            ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:latest
+            ghcr.io/${{ secrets.GHCR_USERNAME }}/prog_crypto:${{ github.sha }}
+            ghcr.io/${{ secrets.GHCR_USERNAME }}/prog_crypto:latest
 
   # 2. Tests
   test:
@@ -34,4 +34,4 @@ jobs:
 
       - name: Run frontend tests
         run: |
-          docker run --rm ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }} npm test
+          docker run --rm ghcr.io/${{ secrets.GHCR_USERNAME }}/prog_crypto:${{ github.sha }} npm test
