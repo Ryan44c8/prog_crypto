@@ -38,3 +38,29 @@ jobs:
       - name: Run frontend tests
         run: |
           docker run --rm ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }} npm test
+
+  # 3. Mise à jour du repo infra
+  update-infra:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout infra repo
+        uses: actions/checkout@v3
+        with:
+          repository: Ryan44c8/infra_prog_crypto   # <-- ton repo infra
+          ref: main                               # <-- branche par défaut
+          token: ${{ secrets.INFRA_REPO_TOKEN }}
+          path: infra
+
+      - name: Mettre à jour le manifest avec le nouveau tag
+        run: |
+          sed -i "s|ghcr.io.*/crypto-test:.*|ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }}|g" infra/crypto_test-deployment.yaml
+
+      - name: Commit et push
+        run: |
+          cd infra
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add crypto_test-deployment.yaml
+          git commit -m "Update crypto-test image to ${{ github.sha }}"
+          git push origin main
