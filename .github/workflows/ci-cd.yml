@@ -54,13 +54,13 @@ jobs:
 
       - name: Mettre à jour le manifest avec le nouveau tag
         run: |
-          sed -i "s|ghcr.io.*/crypto-test:.*|ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }}|g" infra/frontend/frontend.yaml
+          sed -i "s|ghcr.io.*/crypto-test:.*|ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }}|g" frontend.yaml
 
       - name: Commit et push
         run: |
           cd infra
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add frontend/frontend.yaml
+          git add frontend.yaml
           git commit -m "Update crypto-test image to ${{ github.sha }}"
           git push origin main
