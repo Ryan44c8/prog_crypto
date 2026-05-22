@@ -50,7 +50,6 @@ jobs:
           repository: Ryan44c8/infra_prog_crypto   # <-- ton repo infra
           ref: main
           token: ${{ secrets.INFRA_REPO_TOKEN }}
-          path: infra
 
       - name: Mettre à jour le manifest avec le nouveau tag
         run: |
@@ -58,9 +57,8 @@ jobs:
 
       - name: Commit et push
         run: |
-          cd infra
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add frontend.yaml
-          git commit -m "Update crypto-test image to ${{ github.sha }}"
+          git commit -m "Update crypto-test image to ${{ github.sha }}" || echo "No changes to commit"
           git push origin main
