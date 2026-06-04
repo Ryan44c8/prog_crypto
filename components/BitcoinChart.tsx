@@ -20,8 +20,20 @@ interface MarketChart {
   prices: [number, number][];
 }
 
+interface ChartDataType {
+  labels: string[];
+  datasets: Array<{
+    label: string;
+    data: number[];
+    borderColor: string;
+    backgroundColor: string;
+    fill: boolean;
+    tension: number;
+  }>;
+}
+
 export default function BitcoinChart() {
-  const [chartData, setChartData] = useState<any>(null);
+  const [chartData, setChartData] = useState<ChartDataType | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {

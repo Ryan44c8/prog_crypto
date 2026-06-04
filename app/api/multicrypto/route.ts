@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 
-let cache: any = null;
+interface CryptoCache {
+  btcData: { prices: [number, number][] };
+  ethData: { prices: [number, number][] };
+  solData: { prices: [number, number][] };
+}
+
+let cache: CryptoCache | null = null;
 let lastFetch = 0;
 
 export async function GET() {
@@ -29,7 +35,7 @@ export async function GET() {
     lastFetch = now;
 
     return NextResponse.json(data);
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: "Erreur API CoinGecko" }, { status: 500 });
   }
 }
