@@ -24,10 +24,23 @@ jobs:
             ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }}
             ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:latest
 
-  # 2. Tests
-  test:
+  # 2. Lint & Quality checks
+  lint:
     runs-on: ubuntu-latest
     needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run ESLint
+        run: |
+          npm install
+          npm run lint
+
+  # 3. Tests
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -39,15 +52,32 @@ jobs:
         run: |
           docker run --rm ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }} npm test
 
-  # 3. Mise à jour du repo infra
-  update-infra:
+      - name: Run backend tests
+        run: |
+          docker run --rm ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }} npm run test:backend
+
+  # 4. Security Scan
+  security:
     runs-on: ubuntu-latest
     needs: test
+    steps:
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }}
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+
+  # 5. Mise à jour du repo infra (GitOps)
+  update-infra:
+    runs-on: ubuntu-latest
+    needs: security
     steps:
       - name: Checkout infra repo
         uses: actions/checkout@v3
         with:
-          repository: Ryan44c8/infra_prog_crypto   # <-- ton repo infra
+          repository: Ryan44c8/infra_prog_crypto
           ref: main
           token: ${{ secrets.INFRA_REPO_TOKEN }}
 
