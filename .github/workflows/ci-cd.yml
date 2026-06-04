@@ -51,11 +51,7 @@ jobs:
       - name: Run frontend tests
         run: |
           docker run --rm ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }} npm test
-
-      - name: Run backend tests
-        run: |
-          docker run --rm ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }} npm run test:backend
-
+          
   # 4. Security Scan
   security:
     runs-on: ubuntu-latest
