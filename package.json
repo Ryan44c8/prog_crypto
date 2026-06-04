@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 3000",
     "lint": "eslint",
-    "test": "jtest"
+    "test": "jest"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
