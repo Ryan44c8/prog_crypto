@@ -32,4 +32,4 @@ COPY --from=build /app/.next ./.next
 RUN npm ci --omit=dev && npm cache clean --force
 
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start", "test"]
