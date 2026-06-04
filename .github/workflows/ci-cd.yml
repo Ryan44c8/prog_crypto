@@ -5,30 +5,39 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # 1. Lint & Quality checks
+  # 1. Lint (qualité du code)
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: npm ci
-      - run: npm run lint
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Run ESLint
+        run: npm run lint
 
-  # 2. Tests hors conteneur
-  test:
+  # 2. Tests unitaires hors conteneur
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: npm ci
-      - run: npm test
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Jest tests
+        run: npm test
 
   # 3. Build & Push image (seulement si lint + tests passent)
   build:
     runs-on: ubuntu-latest
-    needs: [lint, test]   # dépend des deux jobs en parallèle
+    needs: [lint, unit-tests]   # dépend des deux jobs en parallèle
     steps:
-      - uses: actions/checkout@v3
-      - run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
-      - uses: docker/build-push-action@v5
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
@@ -41,7 +50,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - uses: aquasecurity/trivy-action@master
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: ghcr.io/${{ secrets.GHCR_USERNAME }}/crypto-test:${{ github.sha }}
           format: 'table'
@@ -53,7 +63,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: security
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout infra repo
+        uses: actions/checkout@v3
         with:
           repository: Ryan44c8/infra_prog_crypto
           ref: main
