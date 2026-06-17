@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <main>
-      <h1>Mon Dashboard Crypto</h1>
+      <h1>Mon Dashboard Crypto!!</h1>
       <div className="dashboard-grid">
         <div className="card">
           <CryptoPrices />
