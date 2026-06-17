@@ -1,14 +1,8 @@
-# Ignorer les dépendances locales
 node_modules
-
-# Ignorer les fichiers de build locaux
 .next
-dist
-
-# Ignorer les fichiers de contrôle de version
 .git
-.gitignore
-
-# Ignorer les logs et caches
-*.log
-.cache
+.env*
+npm-debug.log
+README.md
+.dockerignore
+Dockerfile
