@@ -104,7 +104,7 @@ jobs:
       - name: Checkout infra repo
         uses: actions/checkout@v4
         with:
-          repository: user/infra_prog_crypto
+          repository: Ryan44c8/infra_prog_crypto
           ref: main
           token: ${{ secrets.INFRA_REPO_TOKEN }}
 
